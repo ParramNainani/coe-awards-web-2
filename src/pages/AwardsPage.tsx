@@ -1,5 +1,7 @@
 import { useState, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 // Lazy load the encapsulated WebGL canvas
 const AwardsWebGL = lazy(() => import('../components/AwardsWebGL'));
@@ -40,6 +42,49 @@ export function AwardsPage() {
   const [activeFilter, setActiveFilter] = useState('All');
   const [activeSubFilter, setActiveSubFilter] = useState('All');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  // Form State
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    company: '',
+    category: '',
+    reason: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleNominationSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.name || !formData.email || !formData.category || !formData.reason) {
+      alert("Please fill in all required fields!");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    try {
+      await addDoc(collection(db, 'nominations'), {
+        ...formData,
+        submittedAt: serverTimestamp(),
+        source: 'Awards Website'
+      });
+      setSubmitStatus('success');
+      setFormData({ name: '', email: '', company: '', category: '', reason: '' });
+      setTimeout(() => setSubmitStatus('idle'), 5000);
+    } catch (error) {
+      console.error("Error submitting nomination: ", error);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const filteredCategories = awardCategories.filter((cat) => {
     const typeMatch = activeFilter === 'All' || cat.type === activeFilter;
@@ -451,39 +496,55 @@ export function AwardsPage() {
               </div>
 
               <div className="flex-1">
-                <form className="bg-[#050510]/80 backdrop-blur-xl border border-white/10 p-8 rounded-3xl space-y-6">
+                <form onSubmit={handleNominationSubmit} className="bg-[#050510]/80 backdrop-blur-xl border border-white/10 p-8 rounded-3xl space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                       <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Full Name</label>
-                       <input type="text" placeholder="John Doe" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
+                       <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Full Name <span className="text-[#FFD700]">*</span></label>
+                       <input type="text" name="name" value={formData.name} onChange={handleInputChange} required placeholder="John Doe" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
                     </div>
                     <div className="space-y-2">
-                       <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Email Address</label>
-                       <input type="email" placeholder="john@example.com" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
+                       <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Email Address <span className="text-[#FFD700]">*</span></label>
+                       <input type="email" name="email" value={formData.email} onChange={handleInputChange} required placeholder="john@example.com" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
                     </div>
                   </div>
                   <div className="space-y-2">
                      <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Company / Organization</label>
-                     <input type="text" placeholder="Acme Corp" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
+                     <input type="text" name="company" value={formData.company} onChange={handleInputChange} placeholder="Acme Corp" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
                   </div>
                   <div className="space-y-2">
-                     <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Nomination Category</label>
-                     <select className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors appearance-none">
-                       <option>Select a category...</option>
+                     <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Nomination Category <span className="text-[#FFD700]">*</span></label>
+                     <select name="category" value={formData.category} onChange={handleInputChange} required className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors appearance-none">
+                       <option value="">Select a category...</option>
                        <optgroup label="Organization Categories">
-                         {awardCategories.filter(c => c.type === 'Organization').map(cat => <option key={cat.id} value={cat.id}>{cat.title}</option>)}
+                         {awardCategories.filter(c => c.type === 'Organization').map(cat => <option key={cat.id} value={cat.title}>{cat.title}</option>)}
                        </optgroup>
                        <optgroup label="Individual Categories">
-                         {awardCategories.filter(c => c.type === 'Individual').map(cat => <option key={cat.id} value={cat.id}>{cat.title}</option>)}
+                         {awardCategories.filter(c => c.type === 'Individual').map(cat => <option key={cat.id} value={cat.title}>{cat.title}</option>)}
                        </optgroup>
                      </select>
                   </div>
                   <div className="space-y-2">
-                     <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Brief Reason for Nomination</label>
-                     <textarea rows={4} placeholder="Tell us why this nominee deserves the award..." className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors resize-none" />
+                     <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Brief Reason for Nomination <span className="text-[#FFD700]">*</span></label>
+                     <textarea rows={4} name="reason" value={formData.reason} onChange={handleInputChange} required placeholder="Tell us why this nominee deserves the award..." className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors resize-none" />
                   </div>
-                  <button type="button" className="w-full py-4 mt-2 rounded-xl bg-gradient-to-r from-[#FFD700] to-[#ffaa00] text-black font-bold tracking-widest uppercase hover:brightness-110 transition-all shadow-[0_0_20px_rgba(255,215,0,0.3)]">
-                    Submit Nomination
+                  
+                  {submitStatus === 'success' && (
+                    <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/30 text-green-400 text-center text-sm font-medium">
+                      Nomination submitted successfully!
+                    </div>
+                  )}
+                  {submitStatus === 'error' && (
+                    <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-center text-sm font-medium">
+                      Failed to submit nomination. Please try again.
+                    </div>
+                  )}
+
+                  <button 
+                    type="submit" 
+                    disabled={isSubmitting}
+                    className={`w-full py-4 mt-2 rounded-xl text-black font-bold tracking-widest uppercase transition-all shadow-[0_0_20px_rgba(255,215,0,0.3)] ${isSubmitting ? 'bg-[#FFD700]/50 cursor-not-allowed' : 'bg-gradient-to-r from-[#FFD700] to-[#ffaa00] hover:brightness-110'}`}
+                  >
+                    {isSubmitting ? 'Submitting...' : 'Submit Nomination'}
                   </button>
                   <p className="text-center text-[#FFD700] font-medium text-sm pt-4 hidden">Your nomination will be reviewed by the jury.</p>
                 </form>
