@@ -34,7 +34,7 @@ const awardCategories: any[] = [
   { id: 'ind-4', type: 'Individual', category: 'Individual Highlights', title: 'Technology Visionary' },
 ];
 
-const MAIN_SITE = 'https://coe-nexus.com';
+const GCC_SUMMIT = 'https://gcc.coe-nexus.com';
 
 export function AwardsPage() {
   const [activeFilter, setActiveFilter] = useState('All');
@@ -74,17 +74,19 @@ export function AwardsPage() {
         {/* Left Links (Desktop) */}
         <div className="hidden lg:flex gap-10 flex-1">
           <ul className="flex items-center gap-8">
-            <li><a href={MAIN_SITE} className="hover:text-[#FFD700] transition-colors">Home</a></li>
-            <li><a href={`${MAIN_SITE}/#overview`} className="hover:text-[#FFD700] transition-colors">Overview</a></li>
-            <li><a href={`${MAIN_SITE}/#speakers`} className="hover:text-[#FFD700] transition-colors">Speakers</a></li>
-            <li><a href={`${MAIN_SITE}/#agenda`} className="hover:text-[#FFD700] transition-colors">Agenda</a></li>
+            <li>
+              <a href={GCC_SUMMIT} className="inline-flex items-center gap-2 hover:text-[#FFD700] transition-colors">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                GCC Catalyst Summit
+              </a>
+            </li>
           </ul>
         </div>
 
         {/* Center Logo */}
         <div className="flex-shrink-0 flex items-center justify-center lg:absolute lg:left-1/2 lg:-translate-x-1/2">
-            <a href={MAIN_SITE} aria-label="CoE Nexus">
-              <img src="/CoE Brand Logo.png" alt="CoE Nexus Logo" className="h-[32px] sm:h-[40px] w-auto object-contain invert opacity-90 transition-opacity hover:opacity-100" />
+            <a href="/" aria-label="COE Awards">
+              <img src="/CoE Brand Logo.png" alt="CoE Awards Logo" className="h-[32px] sm:h-[40px] w-auto object-contain invert opacity-90 transition-opacity hover:opacity-100" />
             </a>
         </div>
 
@@ -92,8 +94,7 @@ export function AwardsPage() {
         <div className="hidden lg:flex items-center gap-8 flex-1 justify-end">
           <ul className="flex items-center gap-8 mr-4">
             <li><a href="#categories" className="hover:text-[#FFD700] transition-colors">Categories</a></li>
-            <li><a href={`${MAIN_SITE}/#contact`} className="hover:text-[#FFD700] transition-colors">Contact</a></li>
-            <li><a href="/" className="text-[#FFD700] font-semibold">Awards</a></li>
+            <li><a href="#nominate" className="hover:text-[#FFD700] transition-colors">Nominate</a></li>
           </ul>
           <motion.button 
             whileHover={{ scale: 1.02 }}
@@ -135,13 +136,12 @@ export function AwardsPage() {
             className="lg:hidden relative z-40 bg-[#030305]/95 border-b border-white/10 backdrop-blur-xl overflow-hidden"
           >
             <nav className="flex flex-col p-4 space-y-4">
-              <a href={MAIN_SITE} className="text-white/80 hover:text-[#FFD700] font-medium" onClick={() => setIsMenuOpen(false)}>Home</a>
-              <a href={`${MAIN_SITE}/#overview`} className="text-white/80 hover:text-[#FFD700] font-medium" onClick={() => setIsMenuOpen(false)}>Overview</a>
-              <a href={`${MAIN_SITE}/#speakers`} className="text-white/80 hover:text-[#FFD700] font-medium" onClick={() => setIsMenuOpen(false)}>Speakers</a>
-              <a href={`${MAIN_SITE}/#agenda`} className="text-white/80 hover:text-[#FFD700] font-medium" onClick={() => setIsMenuOpen(false)}>Agenda</a>
+              <a href={GCC_SUMMIT} className="text-white/80 hover:text-[#FFD700] font-medium inline-flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                GCC Catalyst Summit
+              </a>
               <a href="#categories" className="text-white/80 hover:text-[#FFD700] font-medium" onClick={() => setIsMenuOpen(false)}>Categories</a>
-              <a href={`${MAIN_SITE}/#contact`} className="text-white/80 hover:text-[#FFD700] font-medium" onClick={() => setIsMenuOpen(false)}>Contact</a>
-              <a href="/" className="text-[#FFD700] font-medium" onClick={() => setIsMenuOpen(false)}>Awards</a>
+              <a href="#nominate" className="text-white/80 hover:text-[#FFD700] font-medium" onClick={() => setIsMenuOpen(false)}>Nominate</a>
             </nav>
           </motion.div>
         )}
