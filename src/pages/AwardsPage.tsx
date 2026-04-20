@@ -179,7 +179,7 @@ export function AwardsPage() {
         {/* Center Logo */}
         <div className="flex-shrink-0 flex items-center justify-center lg:absolute lg:left-1/2 lg:-translate-x-1/2">
             <a href="/" aria-label="COE Awards">
-              <img src="/CoE%20Brand%20Logo.png" alt="CoE Awards Logo" className="h-[32px] sm:h-[40px] w-auto object-contain invert opacity-90 transition-opacity hover:opacity-100" />
+              <img src="/CoE%20Brand%20Logo.png" alt="CoE Awards Logo" className="h-[32px] sm:h-[40px] w-auto object-contain opacity-90 transition-opacity hover:opacity-100" />
             </a>
         </div>
 
