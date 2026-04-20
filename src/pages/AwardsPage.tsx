@@ -34,7 +34,7 @@ const awardCategories: any[] = [
   { id: 'ind-4', type: 'Individual', category: 'Individual Highlights', title: 'Technology Visionary' },
 ];
 
-const GCC_SUMMIT = 'https://gcc.coe-nexus.com';
+const GCC_SUMMIT = 'https://gcc-catalyst-summit.coe-nexus.com/';
 
 export function AwardsPage() {
   const [activeFilter, setActiveFilter] = useState('All');
