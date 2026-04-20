@@ -75,7 +75,7 @@ export function AwardsPage() {
         <div className="hidden lg:flex gap-10 flex-1">
           <ul className="flex items-center gap-8">
             <li>
-              <a href={GCC_SUMMIT} className="inline-flex items-center gap-2 hover:text-[#FFD700] transition-colors">
+              <a href={GCC_SUMMIT} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-[#FFD700] transition-colors">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                 GCC Catalyst Summit
               </a>
@@ -136,7 +136,7 @@ export function AwardsPage() {
             className="lg:hidden relative z-40 bg-[#030305]/95 border-b border-white/10 backdrop-blur-xl overflow-hidden"
           >
             <nav className="flex flex-col p-4 space-y-4">
-              <a href={GCC_SUMMIT} className="text-white/80 hover:text-[#FFD700] font-medium inline-flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+              <a href={GCC_SUMMIT} target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-[#FFD700] font-medium inline-flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                 GCC Catalyst Summit
               </a>
