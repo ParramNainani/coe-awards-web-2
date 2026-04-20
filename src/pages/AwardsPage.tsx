@@ -2,6 +2,8 @@ import { useState, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
+import emailjs from '@emailjs/browser';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
 // Lazy load the encapsulated WebGL canvas
 const AwardsWebGL = lazy(() => import('../components/AwardsWebGL'));
@@ -47,6 +49,8 @@ export function AwardsPage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
+    designation: '',
     company: '',
     category: '',
     reason: ''
@@ -61,7 +65,7 @@ export function AwardsPage() {
 
   const handleNominationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.category || !formData.reason) {
+    if (!formData.name || !formData.email || !formData.category || !formData.reason || !formData.phone || !formData.designation) {
       alert("Please fill in all required fields!");
       return;
     }
@@ -70,13 +74,51 @@ export function AwardsPage() {
     setSubmitStatus('idle');
 
     try {
+      // 1. Save to Firebase
       await addDoc(collection(db, 'nominations'), {
         ...formData,
         submittedAt: serverTimestamp(),
         source: 'Awards Website'
       });
+
+      // 2. EmailJS Initialization
+      const serviceId = 'service_jrtgg9k';
+      const notificationTemplateId = import.meta.env.VITE_EMAILJS_NOTIFICATION_TEMPLATE_ID || 'template_notification'; // Needs to be added to .env
+      const autoReplyTemplateId = 'template_y9e0fj6';
+      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'add_your_public_key_here';
+
+      // 3. Prepare Template Params matching the requested formats
+      const templateParams = {
+        name: 'Admin', // For notification recipient (e.g. 'Admin' or receiver's name)
+        sender_name: formData.name,
+        sender_email: formData.email,
+        phone: formData.phone,
+        designation: formData.designation,
+        company: formData.company,
+        message: formData.reason,
+        source: 'Awards Website Nomination',
+        category: formData.category,
+      };
+
+      // 4. Send Notification to Admin
+      if (import.meta.env.VITE_EMAILJS_PUBLIC_KEY) {
+         try {
+           await emailjs.send(serviceId, notificationTemplateId, templateParams, publicKey);
+           // 5. Send Auto-Reply to the submitter
+           await emailjs.send(serviceId, autoReplyTemplateId, {
+             ...templateParams,
+             to_email: formData.email, // Auto reply usually needs recipient email
+             to_name: formData.name
+           }, publicKey);
+         } catch (emailError) {
+           console.error("EmailJS failed to send, but nomination was saved:", emailError);
+         }
+      } else {
+         console.warn("EmailJS public key is missing from environment. Skipping email dispatch.");
+      }
+
       setSubmitStatus('success');
-      setFormData({ name: '', email: '', company: '', category: '', reason: '' });
+      setFormData({ name: '', email: '', phone: '', designation: '', company: '', category: '', reason: '' });
       setTimeout(() => setSubmitStatus('idle'), 5000);
     } catch (error) {
       console.error("Error submitting nomination: ", error);
@@ -95,20 +137,26 @@ export function AwardsPage() {
   return (
     <div className="min-h-screen bg-[#050510] overflow-hidden text-white font-sans relative">
       {/* Background WebGL Canvas taking over the Hero section completely */}
-      <div className="absolute inset-0 h-[100vh] w-full z-0 pointer-events-none opacity-80 mix-blend-screen">
-         <Suspense fallback={
-           <div className="w-full h-full flex flex-col items-center justify-center bg-[#0c1222]">
-             <motion.div 
-               animate={{ opacity: [0.3, 1, 0.3], scale: [0.98, 1, 0.98] }} 
-               transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-               className="text-[#FFD700] font-sans tracking-[0.2em] text-sm font-semibold"
-             >
-               Loading Experience...
-             </motion.div>
-           </div>
+      <div className="absolute inset-0 h-[100vh] w-full z-0 pointer-events-none opacity-80 mix-blend-screen bg-[#050510]">
+         <ErrorBoundary fallback={
+            <div className="w-full h-full flex flex-col items-center justify-center">
+              <div className="text-[#FFD700]/50 font-sans tracking-[0.2em] text-xs uppercase animate-pulse">Experience Unavailable</div>
+            </div>
          }>
-          <AwardsWebGL />
-         </Suspense>
+           <Suspense fallback={
+             <div className="w-full h-full flex flex-col items-center justify-center bg-[#0c1222]">
+               <motion.div 
+                 animate={{ opacity: [0.3, 1, 0.3], scale: [0.98, 1, 0.98] }} 
+                 transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                 className="text-[#FFD700] font-sans tracking-[0.2em] text-sm font-semibold"
+               >
+                 Loading Experience...
+               </motion.div>
+             </div>
+           }>
+            <AwardsWebGL />
+           </Suspense>
+         </ErrorBoundary>
       </div>
       
       {/* Soft dark vignette gradient to frame the 3D element smoothly */}
@@ -507,9 +555,19 @@ export function AwardsPage() {
                        <input type="email" name="email" value={formData.email} onChange={handleInputChange} required placeholder="john@example.com" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
                     </div>
                   </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                       <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Phone Number <span className="text-[#FFD700]">*</span></label>
+                       <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required placeholder="+1 234 567 890" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
+                    </div>
+                    <div className="space-y-2">
+                       <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Designation <span className="text-[#FFD700]">*</span></label>
+                       <input type="text" name="designation" value={formData.designation} onChange={handleInputChange} required placeholder="e.g. Director of Engineering" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
+                    </div>
+                  </div>
                   <div className="space-y-2">
-                     <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Company / Organization</label>
-                     <input type="text" name="company" value={formData.company} onChange={handleInputChange} placeholder="Acme Corp" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
+                     <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Company / Organization <span className="text-[#FFD700]">*</span></label>
+                     <input type="text" name="company" value={formData.company} onChange={handleInputChange} required placeholder="Acme Corp" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
                   </div>
                   <div className="space-y-2">
                      <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Nomination Category <span className="text-[#FFD700]">*</span></label>
