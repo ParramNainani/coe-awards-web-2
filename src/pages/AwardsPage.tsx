@@ -52,8 +52,7 @@ export function AwardsPage() {
     phone: '',
     designation: '',
     company: '',
-    category: '',
-    reason: ''
+    category: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
@@ -65,7 +64,7 @@ export function AwardsPage() {
 
   const handleNominationSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.category || !formData.reason || !formData.phone || !formData.designation) {
+    if (!formData.name || !formData.email || !formData.category || !formData.phone || !formData.designation) {
       alert("Please fill in all required fields!");
       return;
     }
@@ -95,7 +94,7 @@ export function AwardsPage() {
         phone: formData.phone,
         designation: formData.designation,
         company: formData.company,
-        message: formData.reason,
+        message: 'Nomination Interest Expressed',
         source: 'Awards Website Nomination',
         category: formData.category,
       };
@@ -118,7 +117,7 @@ export function AwardsPage() {
       }
 
       setSubmitStatus('success');
-      setFormData({ name: '', email: '', phone: '', designation: '', company: '', category: '', reason: '' });
+      setFormData({ name: '', email: '', phone: '', designation: '', company: '', category: '' });
       setTimeout(() => setSubmitStatus('idle'), 5000);
     } catch (error) {
       console.error("Error submitting nomination: ", error);
@@ -256,12 +255,12 @@ export function AwardsPage() {
           </motion.div>
           
           <motion.h1 
-            className="text-6xl md:text-8xl lg:text-9xl tracking-[0.05em] font-medium text-white drop-shadow-xl"
+            className="text-6xl md:text-8xl lg:text-9xl tracking-[0.05em] font-['Chakra_Petch'] font-bold text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/70 drop-shadow-[0_10px_30px_rgba(255,255,255,0.15)]"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, delay: 0.2, ease: 'easeOut' }}
           >
-            COE AWARDS
+            CoE Awards
           </motion.h1>
           
           <motion.h2 
@@ -330,9 +329,9 @@ export function AwardsPage() {
                   </div>
                   <span className="font-mono text-xs text-white/30 tracking-widest group-hover:text-[#FFD700]/80 transition-colors">01 //</span>
                 </div>
-                <h4 className="text-xl font-bold text-white mb-4 tracking-wide group-hover:text-[#FFD700] transition-colors">Recognise your team</h4>
+                <h4 className="text-xl font-bold text-white mb-4 tracking-wide group-hover:text-[#FFD700] transition-colors">Deserved Limelight</h4>
                 <p className="text-sm md:text-base text-white/50 leading-relaxed font-light group-hover:text-white/80 transition-colors">
-                  There's no better recognition for your team's hard work than winning or being shortlisted for an award. Celebrate excellence on a premier stage.
+                  Step into the spotlight and showcase your groundbreaking achievements on a global stage. Let your hard work and innovation receive the premier recognition they truly deserve.
                 </p>
               </div>
             </motion.div>
@@ -361,9 +360,9 @@ export function AwardsPage() {
                   </div>
                   <span className="font-mono text-xs text-white/30 tracking-widest group-hover:text-[#FFD700]/80 transition-colors">02 //</span>
                 </div>
-                <h4 className="text-xl font-bold text-white mb-4 tracking-wide group-hover:text-[#FFD700] transition-colors">Be seen, celebrated</h4>
+                <h4 className="text-xl font-bold text-white mb-4 tracking-wide group-hover:text-[#FFD700] transition-colors">Highlight Value</h4>
                 <p className="text-sm md:text-base text-white/50 leading-relaxed font-light group-hover:text-white/80 transition-colors">
-                  If you're passionate about your work and want to bring it to a wider audience, awards give you the ultimate platform to showcase your success.
+                  Demonstrate the tangible impact and strategic value of your initiatives. Illustrate how your transformative efforts are driving positive change and delivering exceptional outcomes.
                 </p>
               </div>
             </motion.div>
@@ -391,9 +390,9 @@ export function AwardsPage() {
                   </div>
                   <span className="font-mono text-xs text-white/30 tracking-widest group-hover:text-[#FFD700]/80 transition-colors">03 //</span>
                 </div>
-                <h4 className="text-xl font-bold text-white mb-4 tracking-wide group-hover:text-[#FFD700] transition-colors">Build your profile</h4>
+                <h4 className="text-xl font-bold text-white mb-4 tracking-wide group-hover:text-[#FFD700] transition-colors">Recognise Team</h4>
                 <p className="text-sm md:text-base text-white/50 leading-relaxed font-light group-hover:text-white/80 transition-colors">
-                  Being shortlisted positions you and your organization as leaders in your field, which can be leveraged to attract top-tier talent and future partners.
+                  There's no better recognition for your team's hard work than winning or being shortlisted for an award. Celebrate excellence and boost morale on a premier stage.
                 </p>
               </div>
             </motion.div>
@@ -421,9 +420,9 @@ export function AwardsPage() {
                   </div>
                   <span className="font-mono text-xs text-white/30 tracking-widest group-hover:text-[#FFD700]/80 transition-colors">04 //</span>
                 </div>
-                <h4 className="text-xl font-bold text-white mb-4 tracking-wide group-hover:text-[#FFD700] transition-colors">Amplify tech power</h4>
+                <h4 className="text-xl font-bold text-white mb-4 tracking-wide group-hover:text-[#FFD700] transition-colors">Enhance Credibility</h4>
                 <p className="text-sm md:text-base text-white/50 leading-relaxed font-light group-hover:text-white/80 transition-colors">
-                  Be part of a positive story for the tech industry. Celebrate the enormous benefits the sector brings to the broader economy and our daily lives.
+                  Being recognized by an esteemed jury positions you and your organization as industry leaders. Leverage this prestige to attract top-tier talent and forge invaluable partnerships.
                 </p>
               </div>
             </motion.div>
@@ -514,33 +513,44 @@ export function AwardsPage() {
 
         {/* Register / Nominate Now Section */}
         <section id="nominate" className="max-w-[85vw] mx-auto pb-32 pt-10">
-          <div className="bg-gradient-to-br from-[#1a1a2e] to-[#0a0a1a] rounded-[2.5rem] border border-white/10 p-8 md:p-16 relative overflow-hidden shadow-2xl">
+          <div className="bg-[#050510] rounded-[2.5rem] border border-white/10 p-8 md:p-16 relative overflow-hidden shadow-2xl group">
+            {/* WhatsApp Image Background */}
+            <div 
+              className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-40 group-hover:opacity-50 transition-opacity duration-700"
+              style={{ backgroundImage: 'url("/nomination-bg.jpeg")' }}
+            />
+            {/* Dark gradient overlay so text remains readable */}
+            <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#050510] via-[#050510]/70 to-[#050510]/30" />
+            
             {/* Background decoration */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#FFD700]/5 rounded-full blur-[100px] pointer-events-none transform translate-x-1/3 -translate-y-1/4" />
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#FFD700]/10 rounded-full blur-[100px] pointer-events-none transform translate-x-1/3 -translate-y-1/4 z-0" />
             
             <div className="relative z-10 flex flex-col lg:flex-row gap-16 h-full">
               
-              <div className="flex-1 flex flex-col justify-center">
-                <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6">
-                  Submit a <br/><span className="text-[#FFD700]">Nomination</span>
+              <div className="flex-1 flex flex-col justify-center relative">
+                {/* Adding the generated image for visual appeal behind/above the text */}
+                <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-6 relative z-10">
+                  Nomination <br/><span className="text-[#FFD700]">Process</span>
                 </h3>
-                <p className="text-lg text-white/60 mb-10 max-w-md leading-relaxed">
-                  Join the ranks of the globally recognized innovators. Nominate yourself, your organization, or a peer for excellence in technology and leadership.
+                <p className="text-lg text-white/60 mb-10 max-w-md leading-relaxed relative z-10">
+                  Join the ranks of the globally recognized innovators. Follow this process to express your interest in excellence in technology and leadership.
                 </p>
-                <div className="space-y-6 text-sm font-medium text-white/80">
+                <div className="space-y-6 text-sm font-medium text-white/80 relative z-10">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full border border-[#FFD700]/30 flex flex-shrink-0 items-center justify-center bg-[#FFD700]/10 text-[#FFD700]">1</div>
-                    <p>Select your desired award category</p>
+                    <p>Select your Desired Award Category</p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full border border-[#FFD700]/30 flex flex-shrink-0 items-center justify-center bg-[#FFD700]/10 text-[#FFD700]">2</div>
-                    <p>Fill in the critical details</p>
+                    <p>Present Supporting Credentials</p>
                   </div>
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full border border-[#FFD700]/30 flex flex-shrink-0 items-center justify-center bg-[#FFD700]/10 text-[#FFD700]">3</div>
-                    <p>Our jury reviews the comprehensive submission</p>
+                    <p>Evaluation by Esteemed Jury Panel</p>
                   </div>
                 </div>
+                
+
               </div>
 
               <div className="flex-1">
@@ -581,10 +591,7 @@ export function AwardsPage() {
                        </optgroup>
                      </select>
                   </div>
-                  <div className="space-y-2">
-                     <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Brief Reason for Nomination <span className="text-[#FFD700]">*</span></label>
-                     <textarea rows={4} name="reason" value={formData.reason} onChange={handleInputChange} required placeholder="Tell us why this nominee deserves the award..." className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors resize-none" />
-                  </div>
+                  {/* Brief Reason removed per instructions */}
                   
                   {submitStatus === 'success' && (
                     <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/30 text-green-400 text-center text-sm font-medium">
@@ -602,9 +609,9 @@ export function AwardsPage() {
                     disabled={isSubmitting}
                     className={`w-full py-4 mt-2 rounded-xl text-black font-bold tracking-widest uppercase transition-all shadow-[0_0_20px_rgba(255,215,0,0.3)] ${isSubmitting ? 'bg-[#FFD700]/50 cursor-not-allowed' : 'bg-gradient-to-r from-[#FFD700] to-[#ffaa00] hover:brightness-110'}`}
                   >
-                    {isSubmitting ? 'Submitting...' : 'Submit Nomination'}
+                    {isSubmitting ? 'Submitting...' : 'Express Interest'}
                   </button>
-                  <p className="text-center text-[#FFD700] font-medium text-sm pt-4 hidden">Your nomination will be reviewed by the jury.</p>
+                  <p className="text-center text-[#FFD700]/70 font-medium text-xs pt-4">Disclaimer: This form is only to Express Interest. The Nomination Submission process will commence after coordinating with our team.</p>
                 </form>
               </div>
             </div>
@@ -628,6 +635,15 @@ export function AwardsPage() {
             </div>
           </div>
         </section>
+
+        {/* Basic Footer */}
+        <footer className="w-full py-8 bg-[#020205] border-t border-white/5 text-center mt-auto">
+          <div className="max-w-[85vw] mx-auto flex flex-col items-center justify-center space-y-4">
+             <div className="w-12 h-1 rounded-full bg-[#FFD700]/30 mb-2"></div>
+             <p className="text-white/40 text-xs tracking-widest uppercase font-medium">© {new Date().getFullYear()} CoE Awards. All rights reserved.</p>
+             <p className="text-white/30 text-[10px] tracking-wide max-w-lg mt-2 font-light">The Pinnacle of Excellence. Transforming industries through visionary leadership and breakthrough innovation.</p>
+          </div>
+        </footer>
       </div>
     </div>
   );
