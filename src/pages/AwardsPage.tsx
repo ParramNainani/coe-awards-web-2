@@ -558,26 +558,26 @@ export function AwardsPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                        <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Full Name <span className="text-[#FFD700]">*</span></label>
-                       <input type="text" name="name" value={formData.name} onChange={handleInputChange} required placeholder="John Doe" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
+                       <input type="text" name="name" value={formData.name} onChange={handleInputChange} required placeholder="" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
                     </div>
                     <div className="space-y-2">
                        <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Email Address <span className="text-[#FFD700]">*</span></label>
-                       <input type="email" name="email" value={formData.email} onChange={handleInputChange} required placeholder="john@example.com" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
+                       <input type="email" name="email" value={formData.email} onChange={handleInputChange} required placeholder="" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                        <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Phone Number <span className="text-[#FFD700]">*</span></label>
-                       <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required placeholder="+1 234 567 890" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
+                       <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required placeholder="" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
                     </div>
                     <div className="space-y-2">
                        <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Designation <span className="text-[#FFD700]">*</span></label>
-                       <input type="text" name="designation" value={formData.designation} onChange={handleInputChange} required placeholder="e.g. Director of Engineering" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
+                       <input type="text" name="designation" value={formData.designation} onChange={handleInputChange} required placeholder="" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
                     </div>
                   </div>
                   <div className="space-y-2">
                      <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Company / Organization <span className="text-[#FFD700]">*</span></label>
-                     <input type="text" name="company" value={formData.company} onChange={handleInputChange} required placeholder="Acme Corp" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
+                     <input type="text" name="company" value={formData.company} onChange={handleInputChange} required placeholder="" className="w-full bg-[#111122] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#FFD700]/50 transition-colors" />
                   </div>
                   <div className="space-y-2">
                      <label className="text-xs font-bold text-white/60 uppercase tracking-widest">Nomination Category <span className="text-[#FFD700]">*</span></label>
