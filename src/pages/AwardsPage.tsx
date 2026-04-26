@@ -186,14 +186,14 @@ export function AwardsPage() {
         <div className="hidden lg:flex items-center gap-8 flex-1 justify-end">
           <ul className="flex items-center gap-8 mr-4">
             <li><a href="#categories" className="hover:text-[#FFD700] transition-colors">Categories</a></li>
-            <li><a href="#nominate" className="hover:text-[#FFD700] transition-colors">Nominate</a></li>
           </ul>
           <motion.button 
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="px-6 py-2 rounded-full border border-[#FFD700]/30 hover:border-[#FFD700]/80 bg-[#FFD700]/5 text-[#FFD700] font-semibold tracking-wider text-xs uppercase transition-colors"
+            onClick={() => document.getElementById('nominate')?.scrollIntoView({ behavior: 'smooth' })}
           >
-            Vote Now
+            Express Interest
           </motion.button>
         </div>
 
@@ -203,8 +203,9 @@ export function AwardsPage() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="px-4 py-1.5 rounded-full border border-[#FFD700]/30 hover:border-[#FFD700]/80 bg-[#FFD700]/5 text-[#FFD700] font-semibold tracking-wider text-[10px] uppercase transition-colors"
+            onClick={() => document.getElementById('nominate')?.scrollIntoView({ behavior: 'smooth' })}
           >
-            Vote
+            Express Interest
           </motion.button>
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -233,7 +234,7 @@ export function AwardsPage() {
                 GCC Catalyst Summit
               </a>
               <a href="#categories" className="text-white/80 hover:text-[#FFD700] font-medium" onClick={() => setIsMenuOpen(false)}>Categories</a>
-              <a href="#nominate" className="text-white/80 hover:text-[#FFD700] font-medium" onClick={() => setIsMenuOpen(false)}>Nominate</a>
+              {/* Nominate button removed as requested */}
             </nav>
           </motion.div>
         )}
@@ -496,15 +497,7 @@ export function AwardsPage() {
                     </h4>
                   </div>
                   
-                  <div 
-                    className="relative z-10 mt-8 flex items-center gap-3 text-[#FFD700] font-bold text-sm tracking-wider uppercase opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0 w-max"
-                    onClick={() => document.getElementById('nominate')?.scrollIntoView({ behavior: 'smooth'})}
-                  >
-                    <span>Nominate</span>
-                    <svg className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                  </div>
+                  {/* Nominate button removed as requested */}
                 </motion.div>
               ))}
             </AnimatePresence>
