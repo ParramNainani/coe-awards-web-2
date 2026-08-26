@@ -1,7 +1,7 @@
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useRef, useMemo, useState } from 'react';
 import * as THREE from 'three';
-import { Line, Float, Sparkles, Stars } from '@react-three/drei';
+import { Line, Float, Sparkles } from '@react-three/drei';
 
 function StreamTrail({ curve, isReversed, onComplete }: { curve: THREE.Curve<THREE.Vector3>, isReversed: boolean, onComplete: () => void }) {
   const ref = useRef<THREE.Mesh>(null);
@@ -9,21 +9,21 @@ function StreamTrail({ curve, isReversed, onComplete }: { curve: THREE.Curve<THR
   const progress = useRef(0);
   const speed = 0.18;
   const trailLength = 0.25;
-  
+
   useFrame((state, delta) => {
     if (!ref.current) return;
-    
+
     progress.current += delta * speed;
-    
+
     if (progress.current >= 1) {
       onComplete();
       return;
     }
-    
+
     const t = isReversed ? 1 - progress.current : progress.current;
     const pos = curve.getPoint(Math.min(Math.max(t, 0), 1));
     ref.current.position.copy(pos);
-    
+
     const scale = Math.sin(progress.current * Math.PI) * 1.5;
     ref.current.scale.setScalar(Math.max(scale, 0.01));
 
@@ -34,7 +34,7 @@ function StreamTrail({ curve, isReversed, onComplete }: { curve: THREE.Curve<THR
         const offset = (i / numSegments) * trailLength;
         let ptT = isReversed ? t + offset : t - offset;
         ptT = Math.min(Math.max(ptT, 0), 1);
-        
+
         const pt = curve.getPoint(ptT);
         positions.push(pt.x, pt.y, pt.z);
       }
@@ -46,11 +46,11 @@ function StreamTrail({ curve, isReversed, onComplete }: { curve: THREE.Curve<THR
 
     const worldPos = new THREE.Vector3();
     ref.current.getWorldPosition(worldPos);
-    
+
     const targetCamPos = worldPos.clone().normalize().multiplyScalar(9);
     targetCamPos.y += 1.5;
     targetCamPos.normalize().multiplyScalar(9);
-    
+
     state.camera.position.lerp(targetCamPos, delta * 2.5);
     state.camera.lookAt(0, 0, 0);
   });
@@ -59,15 +59,15 @@ function StreamTrail({ curve, isReversed, onComplete }: { curve: THREE.Curve<THR
     <group>
       <Line
         ref={lineRef}
-        points={Array(31).fill(new THREE.Vector3(0,0,0))} 
-        color="#FFAA00"
-        lineWidth={4.5} 
+        points={Array(31).fill(new THREE.Vector3(0, 0, 0))}
+        color="#ea580c"
+        lineWidth={2.5}
         transparent={false}
         frustumCulled={false}
       />
       <mesh ref={ref} frustumCulled={false}>
-        <sphereGeometry args={[0.03, 16, 16]} />
-        <meshBasicMaterial color="#FFD700" />
+        <sphereGeometry args={[0.045, 16, 16]} />
+        <meshBasicMaterial color="#ea580c" />
       </mesh>
     </group>
   );
@@ -80,7 +80,7 @@ function SingleDataStream({ arcs }: { arcs: any[] }) {
     const currentArc = arcs[streamState.index];
     const endPoint = streamState.isReversed ? currentArc.p1 : currentArc.p2;
 
-    const nextArcs: {idx: number, reverse: boolean}[] = [];
+    const nextArcs: { idx: number, reverse: boolean }[] = [];
     arcs.forEach((arc, i) => {
       if (i !== streamState.index) {
         if (arc.p1.distanceTo(endPoint) < 0.1) nextArcs.push({ idx: i, reverse: false });
@@ -123,18 +123,18 @@ function ConnectionArcs({ radius }: { radius: number }) {
         const p1 = points[i];
         const p2 = points[j];
         const distance = p1.distanceTo(p2);
-        
+
         if (distance < radius * 1.5 && Math.random() > 0.45) {
           const midPoint = p1.clone().add(p2).multiplyScalar(0.5);
-          midPoint.normalize().multiplyScalar(radius + Math.max(distance * 0.3, 0.4)); 
-          
+          midPoint.normalize().multiplyScalar(radius + Math.max(distance * 0.3, 0.4));
+
           const curve = new THREE.QuadraticBezierCurve3(p1, midPoint, p2);
-          arcs.push({ 
-            curvePoints: curve.getPoints(20), 
+          arcs.push({
+            curvePoints: curve.getPoints(20),
             curve,
             p1,
             p2
-          }); 
+          });
         }
       }
     }
@@ -142,7 +142,7 @@ function ConnectionArcs({ radius }: { radius: number }) {
   }, [radius]);
 
   const groupRef = useRef<THREE.Group>(null);
-  
+
   useFrame((state) => {
     if (groupRef.current) {
       groupRef.current.rotation.y = state.clock.elapsedTime * 0.05;
@@ -154,19 +154,19 @@ function ConnectionArcs({ radius }: { radius: number }) {
     <group ref={groupRef}>
       {ObjectConnections.points.map((p, idx) => (
         <mesh key={`p-${idx}`} position={p}>
-          <sphereGeometry args={[0.06, 16, 16]} />
-          <meshBasicMaterial color="#00ffff" />
+          <sphereGeometry args={[0.065, 16, 16]} />
+          <meshBasicMaterial color="#f97316" />
         </mesh>
       ))}
 
       {ObjectConnections.arcs.map((arc, idx) => (
-        <Line 
+        <Line
           key={`arc-line-${idx}`}
-          points={arc.curvePoints} 
-          color="#FFD700" 
-          lineWidth={1} 
-          transparent 
-          opacity={0.25} 
+          points={arc.curvePoints}
+          color="#ea580c"
+          lineWidth={0.8}
+          transparent
+          opacity={0.15}
         />
       ))}
 
@@ -176,22 +176,17 @@ function ConnectionArcs({ radius }: { radius: number }) {
 
       <group scale={[radius * 0.91, radius * 0.91, radius * 0.91]}>
         <mesh>
-          <sphereGeometry args={[1, 64, 64]} />
-          <meshStandardMaterial 
-            color="#050a15" 
-            emissive="#001133" 
-            emissiveIntensity={0.8} 
-            roughness={0.2} 
-            metalness={0.8} 
-          />
-        </mesh>
-        
-        <mesh>
           <icosahedronGeometry args={[1.001, 4]} />
-          <meshBasicMaterial color="#00ffff" wireframe transparent opacity={0.03} />
+          <meshBasicMaterial color="#94a3b8" wireframe transparent opacity={0.15} />
         </mesh>
-        
-        <Sparkles count={800} scale={2} size={0.6} speed={0.2} opacity={0.3} color="#0088ff" />
+
+        <mesh>
+          <sphereGeometry args={[1.002, 28, 28]} />
+          <meshBasicMaterial color="#ea580c" wireframe transparent opacity={0.08} />
+        </mesh>
+
+        <Sparkles count={150} scale={2} size={0.6} speed={0.15} opacity={0.3} color="#ea580c" />
+        <Sparkles count={100} scale={2} size={0.5} speed={0.15} opacity={0.4} color="#94a3b8" />
       </group>
     </group>
   );
@@ -200,27 +195,27 @@ function ConnectionArcs({ radius }: { radius: number }) {
 function BackgroundTechElements() {
   return (
     <group>
-      <Sparkles count={500} scale={25} size={1.2} speed={0.4} opacity={0.5} color="#00ffff" />
-      <Stars radius={30} depth={20} count={2000} factor={3} saturation={0} fade speed={2} />
+      <Sparkles count={120} scale={25} size={1.2} speed={0.2} opacity={0.2} color="#ea580c" />
+      <Sparkles count={80} scale={25} size={0.8} speed={0.2} opacity={0.3} color="#94a3b8" />
 
       <Float speed={1.5} rotationIntensity={2} floatIntensity={2}>
         <mesh position={[-8, 5, -10]}>
           <icosahedronGeometry args={[1.5, 0]} />
-          <meshBasicMaterial color="#00ffff" wireframe transparent opacity={0.2} />
+          <meshBasicMaterial color="#cbd5e1" wireframe transparent opacity={0.15} />
         </mesh>
       </Float>
 
       <Float speed={1} rotationIntensity={1.5} floatIntensity={2}>
         <mesh position={[9, -4, -12]}>
           <octahedronGeometry args={[2, 0]} />
-          <meshBasicMaterial color="#0066ff" wireframe transparent opacity={0.15} />
+          <meshBasicMaterial color="#ea580c" wireframe transparent opacity={0.1} />
         </mesh>
       </Float>
 
       <Float speed={2} rotationIntensity={3} floatIntensity={1}>
         <mesh position={[-6, -6, -8]}>
-          <torusGeometry args={[1.2, 0.05, 8, 16]} />
-          <meshBasicMaterial color="#ffffff" wireframe transparent opacity={0.1} />
+          <torusGeometry args={[1.4, 0.04, 16, 48]} />
+          <meshBasicMaterial color="#f97316" wireframe transparent opacity={0.15} />
         </mesh>
       </Float>
     </group>
@@ -231,11 +226,15 @@ export default function AwardsWebGL() {
   return (
     <Canvas
       camera={{ position: [0, 0, 8], fov: 65 }}
-      gl={{ antialias: true, alpha: false }}
+      gl={{ antialias: true, alpha: true }}
     >
-      <color attach="background" args={['#0c1222']} />
-      <fog attach="fog" args={['#0c1222', 6, 25]} />
-      
+      <fog attach="fog" args={['#f8fafc', 7, 24]} />
+
+      <ambientLight intensity={1.5} />
+      <pointLight position={[0, 0, -2]} intensity={1.0} color="#ffffff" distance={15} />
+      <pointLight position={[8, 8, 6]} intensity={1.2} color="#ffffff" />
+      <pointLight position={[-8, -6, 5]} intensity={1.0} color="#ea580c" />
+
       <BackgroundTechElements />
 
       <ConnectionArcs radius={4.5} />

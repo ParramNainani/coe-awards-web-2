@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html {
@@ -15,7 +15,10 @@ body {
   min-height: 100vh;
   width: 100%;
   overflow-x: hidden;
-  background: #050510;
+  background: #f8fafc;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
@@ -23,11 +26,17 @@ body {
   isolation: isolate;
 }
 
+::selection {
+  background-color: rgba(245, 158, 11, 0.25);
+  color: #78350f;
+}
+
 @layer utilities {
   .no-scrollbar {
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
