@@ -29,7 +29,7 @@ function StreamTrail({ curve, isReversed, onComplete }: { curve: THREE.Curve<THR
 
     if (lineRef.current) {
       const positions: number[] = [];
-      const numSegments = 30;
+      const numSegments = 15;
       for (let i = 0; i <= numSegments; i++) {
         const offset = (i / numSegments) * trailLength;
         let ptT = isReversed ? t + offset : t - offset;
@@ -59,14 +59,14 @@ function StreamTrail({ curve, isReversed, onComplete }: { curve: THREE.Curve<THR
     <group>
       <Line
         ref={lineRef}
-        points={Array(31).fill(new THREE.Vector3(0, 0, 0))}
+        points={Array(16).fill(new THREE.Vector3(0, 0, 0))}
         color="#ea580c"
         lineWidth={2.5}
         transparent={false}
         frustumCulled={false}
       />
       <mesh ref={ref} frustumCulled={false}>
-        <sphereGeometry args={[0.045, 16, 16]} />
+        <sphereGeometry args={[0.045, 8, 8]} />
         <meshBasicMaterial color="#ea580c" />
       </mesh>
     </group>
@@ -104,7 +104,7 @@ function SingleDataStream({ arcs }: { arcs: any[] }) {
 function ConnectionArcs({ radius }: { radius: number }) {
   const ObjectConnections = useMemo(() => {
     const arcs = [];
-    const numPoints = 40;
+    const numPoints = 25;
     const points = [];
     for (let i = 0; i < numPoints; i++) {
       const phi = Math.acos(-1 + (2 * i) / numPoints);
@@ -130,7 +130,7 @@ function ConnectionArcs({ radius }: { radius: number }) {
 
           const curve = new THREE.QuadraticBezierCurve3(p1, midPoint, p2);
           arcs.push({
-            curvePoints: curve.getPoints(20),
+            curvePoints: curve.getPoints(12),
             curve,
             p1,
             p2
@@ -154,7 +154,7 @@ function ConnectionArcs({ radius }: { radius: number }) {
     <group ref={groupRef}>
       {ObjectConnections.points.map((p, idx) => (
         <mesh key={`p-${idx}`} position={p}>
-          <sphereGeometry args={[0.065, 16, 16]} />
+          <sphereGeometry args={[0.065, 8, 8]} />
           <meshBasicMaterial color="#f97316" />
         </mesh>
       ))}
@@ -176,17 +176,17 @@ function ConnectionArcs({ radius }: { radius: number }) {
 
       <group scale={[radius * 0.91, radius * 0.91, radius * 0.91]}>
         <mesh>
-          <icosahedronGeometry args={[1.001, 4]} />
+          <icosahedronGeometry args={[1.001, 2]} />
           <meshBasicMaterial color="#94a3b8" wireframe transparent opacity={0.15} />
         </mesh>
 
         <mesh>
-          <sphereGeometry args={[1.002, 28, 28]} />
+          <sphereGeometry args={[1.002, 16, 16]} />
           <meshBasicMaterial color="#ea580c" wireframe transparent opacity={0.08} />
         </mesh>
 
-        <Sparkles count={150} scale={2} size={0.6} speed={0.15} opacity={0.3} color="#ea580c" />
-        <Sparkles count={100} scale={2} size={0.5} speed={0.15} opacity={0.4} color="#94a3b8" />
+        <Sparkles count={60} scale={2} size={0.6} speed={0.15} opacity={0.3} color="#ea580c" />
+        <Sparkles count={40} scale={2} size={0.5} speed={0.15} opacity={0.4} color="#94a3b8" />
       </group>
     </group>
   );
@@ -195,8 +195,8 @@ function ConnectionArcs({ radius }: { radius: number }) {
 function BackgroundTechElements() {
   return (
     <group>
-      <Sparkles count={120} scale={25} size={1.2} speed={0.2} opacity={0.2} color="#ea580c" />
-      <Sparkles count={80} scale={25} size={0.8} speed={0.2} opacity={0.3} color="#94a3b8" />
+      <Sparkles count={50} scale={25} size={1.2} speed={0.2} opacity={0.2} color="#ea580c" />
+      <Sparkles count={30} scale={25} size={0.8} speed={0.2} opacity={0.3} color="#94a3b8" />
 
       <Float speed={1.5} rotationIntensity={2} floatIntensity={2}>
         <mesh position={[-8, 5, -10]}>
@@ -226,7 +226,9 @@ export default function AwardsWebGL() {
   return (
     <Canvas
       camera={{ position: [0, 0, 8], fov: 65 }}
-      gl={{ antialias: true, alpha: true }}
+      gl={{ antialias: false, alpha: true, powerPreference: 'low-power' }}
+      dpr={[1, 1.5]}
+      performance={{ min: 0.5 }}
     >
       <fog attach="fog" args={['#f8fafc', 7, 24]} />
 

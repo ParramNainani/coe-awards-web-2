@@ -1,9 +1,31 @@
-import { useState, Suspense, lazy } from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../lib/firebase';
+import { getDb, initAnalytics } from '../lib/firebase';
 import emailjs from '@emailjs/browser';
 import { ErrorBoundary } from '../components/ErrorBoundary';
+
+// Detect if device should skip heavy WebGL rendering
+function useCanRenderWebGL() {
+  const [canRender, setCanRender] = useState(false);
+  useEffect(() => {
+    // Skip on touch-primary devices (phones/tablets) — they struggle with Three.js
+    const isTouchPrimary = window.matchMedia('(pointer: coarse)').matches;
+    // Skip on very small screens (likely phones)
+    const isSmallScreen = window.innerWidth < 768;
+    // Skip on low-memory devices (navigator.deviceMemory is in GB, <4GB is constrained)
+    const isLowMemory = (navigator as any).deviceMemory !== undefined && (navigator as any).deviceMemory < 4;
+    // Check if WebGL is even available
+    let hasWebGL = false;
+    try {
+      const canvas = document.createElement('canvas');
+      hasWebGL = !!(canvas.getContext('webgl2') || canvas.getContext('webgl'));
+    } catch { hasWebGL = false; }
+
+    setCanRender(hasWebGL && !isTouchPrimary && !isSmallScreen && !isLowMemory);
+  }, []);
+  return canRender;
+}
 
 // Lazy load the encapsulated WebGL canvas
 const AwardsWebGL = lazy(() => import('../components/AwardsWebGL'));
@@ -49,6 +71,14 @@ const awardCategories: AwardCategory[] = [
 const GCC_SUMMIT = 'https://gcc-catalyst-summit.coe-nexus.com/';
 
 export function AwardsPage() {
+  const canRenderWebGL = useCanRenderWebGL();
+
+  // Lazy-load analytics after page is interactive
+  useEffect(() => {
+    const timer = setTimeout(() => { initAnalytics(); }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Only Organization & Individual (No combined 'All' tab)
   const [activeFilter, setActiveFilter] = useState<'Organization' | 'Individual'>('Organization');
   const [activeSubFilter, setActiveSubFilter] = useState('All');
@@ -98,7 +128,7 @@ export function AwardsPage() {
 
     try {
       // 1. Save to Firebase
-      await addDoc(collection(db, 'nominations'), {
+      await addDoc(collection(getDb(), 'nominations'), {
         ...formData,
         edition: '2nd Edition',
         location: 'Hyderabad',
@@ -171,27 +201,29 @@ export function AwardsPage() {
         <div className="absolute top-[20%] -right-[15%] w-[50vw] h-[50vw] rounded-full bg-amber-900/8 blur-[180px] pointer-events-none" />
       </div>
 
-      {/* Background WebGL Canvas taking over the Hero section completely */}
+      {/* Background WebGL Canvas — only rendered on capable desktop devices */}
       <div className="absolute inset-0 h-[100vh] w-full z-0 pointer-events-none">
-        <ErrorBoundary fallback={
-          <div className="w-full h-full flex flex-col items-center justify-center">
-            <div className="text-[#FFD700]/50 font-sans tracking-[0.2em] text-xs uppercase animate-pulse">Experience Unavailable</div>
-          </div>
-        }>
-          <Suspense fallback={
-            <div className="w-full h-full flex flex-col items-center justify-center bg-[#060406]">
-              <motion.div
-                animate={{ opacity: [0.3, 1, 0.3], scale: [0.98, 1, 0.98] }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                className="text-orange-400 font-sans tracking-[0.2em] text-sm font-semibold"
-              >
-                Loading Experience...
-              </motion.div>
+        {canRenderWebGL ? (
+          <ErrorBoundary fallback={
+            <div className="w-full h-full flex flex-col items-center justify-center">
+              <div className="text-[#FFD700]/50 font-sans tracking-[0.2em] text-xs uppercase animate-pulse">Experience Unavailable</div>
             </div>
           }>
-            <AwardsWebGL />
-          </Suspense>
-        </ErrorBoundary>
+            <Suspense fallback={
+              <div className="w-full h-full flex flex-col items-center justify-center bg-[#060406]">
+                <motion.div
+                  animate={{ opacity: [0.3, 1, 0.3], scale: [0.98, 1, 0.98] }}
+                  transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                  className="text-orange-400 font-sans tracking-[0.2em] text-sm font-semibold"
+                >
+                  Loading Experience...
+                </motion.div>
+              </div>
+            }>
+              <AwardsWebGL />
+            </Suspense>
+          </ErrorBoundary>
+        ) : null}
       </div>
 
       {/* Subtle vignette */}
